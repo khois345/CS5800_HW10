@@ -1,5 +1,7 @@
 package chat;
 
+import java.util.ArrayDeque;
+import java.util.Deque;
 import java.util.List;
 
 import message.*;
@@ -8,6 +10,7 @@ public class User {
 	private String name;
 	private ChatServer server;		// aggregation
 	private ChatHistory history;	// composition
+	private Deque<MessageMemento> sentMementos;	// composition
 
 	public User(String name, ChatServer server) {
 		setName(name);
@@ -55,7 +58,14 @@ public class User {
 		server.blockUser(this, blockedName);
 	}
 
+	public void undoLastMessage() {
+		throw new UnsupportedOperationException();
+	}
+
 	void receiveMessage(Message message) {
 		history.addMessage(message);
+	}
+
+	void removeMessage(String sender, MessageMemento memento) {
 	}
 }

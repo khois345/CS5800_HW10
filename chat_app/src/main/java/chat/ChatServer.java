@@ -89,4 +89,8 @@ public class ChatServer {
 
 		return delivered;
 	}
+
+	public boolean undoMessage(String sender, MessageMemento memento) {
+		throw new UnsupportedOperationException();
+	}
 }

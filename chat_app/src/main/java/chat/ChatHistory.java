@@ -38,4 +38,8 @@ public class ChatHistory {
 
 		return null;
 	}
+
+	public void removeMessage(String sender, MessageMemento memento) {
+		throw new UnsupportedOperationException();
+	}
 }

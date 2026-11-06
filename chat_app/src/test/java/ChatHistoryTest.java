@@ -69,4 +69,52 @@ public class ChatHistoryTest {
 
 		assertNull(history.getLastMessageSent());
 	}
+
+	@Test
+	public void removeMessage() {
+		history.addMessage(sent);
+		history.addMessage(received);
+		history.removeMessage("Alice", sent.createMemento());
+
+		assertEquals(List.of(received), history.getMessages());
+	}
+
+	@Test
+	public void removeMessageNoMatch() {
+		Message other = new Message("Alice", List.of("Bob"), "Not in history");
+		history.addMessage(sent);
+		history.removeMessage("Alice", other.createMemento());
+
+		assertEquals(List.of(sent), history.getMessages());
+	}
+
+	@Test
+	public void removeMessageDifferentSender() {
+		Message sameContent = new Message("Bob", List.of("Alice"), "Hi Bob");
+		sameContent.setTimestamp(sent.getTimestamp());
+		history.addMessage(sameContent);
+		history.removeMessage("Alice", sent.createMemento());
+
+		assertEquals(List.of(sameContent), history.getMessages());
+	}
+
+	@Test
+	public void removeMessageRemovesLatestMatch() {
+		Message repeat = new Message("Alice", List.of("Bob"), "Hi Bob");
+		repeat.setTimestamp(sent.getTimestamp());
+		history.addMessage(sent);
+		history.addMessage(repeat);
+		history.removeMessage("Alice", repeat.createMemento());
+
+		assertSame(sent, history.getMessages().get(0));
+		assertEquals(1, history.getMessages().size());
+	}
+
+	@Test
+	public void removeMessageNull() {
+		history.addMessage(sent);
+		history.removeMessage("Alice", null);
+
+		assertEquals(List.of(sent), history.getMessages());
+	}
 }

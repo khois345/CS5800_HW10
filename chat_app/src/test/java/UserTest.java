@@ -105,4 +105,88 @@ public class UserTest {
 		assertEquals(List.of(), dave.getChatHistory());
 		assertEquals(List.of(), bob.getChatHistory());
 	}
+
+	@Test
+	public void undoLastMessageRemovesFromSender() {
+		alice.sendMessage(List.of("Bob"), "Hi Bob");
+		alice.undoLastMessage();
+
+		assertEquals(List.of(), alice.getChatHistory());
+	}
+
+	@Test
+	public void undoLastMessageRemovesFromAllRecipients() {
+		alice.sendMessage(List.of("Bob", "Annie"), "Hi both");
+		alice.undoLastMessage();
+
+		assertEquals(List.of(), bob.getChatHistory());
+		assertEquals(List.of(), annie.getChatHistory());
+	}
+
+	@Test
+	public void undoLastMessageKeepsEarlierMessages() {
+		alice.sendMessage(List.of("Bob"), "First");
+		alice.sendMessage(List.of("Bob"), "Second");
+		alice.undoLastMessage();
+
+		assertEquals("First", alice.getChatHistory().get(0).getContent());
+		assertEquals(1, alice.getChatHistory().size());
+		assertEquals("First", bob.getChatHistory().get(0).getContent());
+		assertEquals(1, bob.getChatHistory().size());
+	}
+
+	@Test
+	public void undoLastMessageTwice() {
+		alice.sendMessage(List.of("Bob"), "First");
+		alice.sendMessage(List.of("Bob"), "Second");
+		alice.undoLastMessage();
+		alice.undoLastMessage();
+
+		assertEquals(List.of(), alice.getChatHistory());
+		assertEquals(List.of(), bob.getChatHistory());
+	}
+
+	@Test
+	public void undoLastMessageRepeatedContentRemovesOne() {
+		alice.sendMessage(List.of("Bob"), "Hi");
+		alice.sendMessage(List.of("Bob"), "Hi");
+		alice.undoLastMessage();
+
+		assertEquals(1, alice.getChatHistory().size());
+		assertEquals(1, bob.getChatHistory().size());
+	}
+
+	@Test
+	public void undoLastMessageNothingSent() {
+		alice.undoLastMessage();
+
+		assertEquals(List.of(), alice.getChatHistory());
+	}
+
+	@Test
+	public void undoLastMessageKeepsReceivedMessages() {
+		bob.sendMessage(List.of("Alice"), "Hi Alice");
+		alice.undoLastMessage();
+
+		assertEquals(1, alice.getChatHistory().size());
+		assertEquals(1, bob.getChatHistory().size());
+	}
+
+	@Test
+	public void undoLastMessageSkipsUndelivered() {
+		alice.sendMessage(List.of("Bob"), "Hi Bob");
+		alice.sendMessage(List.of("Ghost"), "Hi Ghost");
+		alice.undoLastMessage();
+
+		assertEquals(List.of(), bob.getChatHistory());
+	}
+
+	@Test
+	public void undoLastMessageNotRegistered() {
+		alice.sendMessage(List.of("Bob"), "Hi Bob");
+		server.unregisterUser(alice);
+		alice.undoLastMessage();
+
+		assertEquals(1, bob.getChatHistory().size());
+	}
 }
