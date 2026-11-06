@@ -73,6 +73,10 @@ public class Message {
 	}
 
 	// other methods
+	public MessageMemento createMemento() {
+		return new MessageMemento(null, null);
+	}
+
 	@Override
 	public String toString() {
 		return "[" + timestamp.format(FORMATTER) + "] " + sender + " -> " + String.join(", ", recipients) + ": " + content;
