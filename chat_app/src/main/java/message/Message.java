@@ -74,7 +74,7 @@ public class Message {
 
 	// other methods
 	public MessageMemento createMemento() {
-		return new MessageMemento(null, null);
+		return new MessageMemento(content, timestamp);
 	}
 
 	@Override

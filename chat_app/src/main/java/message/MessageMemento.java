@@ -7,13 +7,15 @@ public class MessageMemento {
 	private LocalDateTime timestamp;
 
 	MessageMemento(String content, LocalDateTime timestamp) {
+		this.content = content;
+		this.timestamp = timestamp;
 	}
 
 	public String getContent() {
-		return null;
+		return content;
 	}
 
 	public LocalDateTime getTimestamp() {
-		return null;
+		return timestamp;
 	}
 }
