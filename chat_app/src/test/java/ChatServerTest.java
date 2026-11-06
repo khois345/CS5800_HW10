@@ -11,11 +11,13 @@ public class ChatServerTest {
 	private final ChatServer server = new ChatServer();
 	private final User alice = new User("Alice", server);
 	private final User bob = new User("Bob", server);
+	private final User annie = new User("Annie", server);
 
 	@BeforeEach
 	public void registerUsers() {
 		server.registerUser(alice);
 		server.registerUser(bob);
+		server.registerUser(annie);
 	}
 
 	@Test
@@ -111,5 +113,74 @@ public class ChatServerTest {
 		alice.sendMessage(List.of("Alice"), "Hi me");
 
 		assertEquals(List.of(), alice.getChatHistory());
+	}
+
+	@Test
+	public void blockUserStopsMessages() {
+		bob.blockUser("Alice");
+		alice.sendMessage(List.of("Bob"), "Hi Bob");
+
+		assertEquals(List.of(), bob.getChatHistory());
+	}
+
+	@Test
+	public void blockUserOnlyRecipientNotSavedForSender() {
+		bob.blockUser("Alice");
+		alice.sendMessage(List.of("Bob"), "Hi Bob");
+
+		assertEquals(List.of(), alice.getChatHistory());
+	}
+
+	@Test
+	public void blockUserOnlyAffectsBlocker() {
+		bob.blockUser("Alice");
+		alice.sendMessage(List.of("Bob", "Annie"), "Hi both");
+
+		assertEquals(List.of(), bob.getChatHistory());
+		assertEquals(1, annie.getChatHistory().size());
+		assertEquals(1, alice.getChatHistory().size());
+	}
+
+	@Test
+	public void blockUserIsOneWay() {
+		bob.blockUser("Alice");
+		bob.sendMessage(List.of("Alice"), "Hi Alice");
+		alice.sendMessage(List.of("Bob"), "Hi Bob");
+
+		assertEquals("Hi Alice", alice.getChatHistory().get(0).getContent());
+		assertEquals(1, alice.getChatHistory().size());
+		assertEquals(1, bob.getChatHistory().size());
+	}
+
+	@Test
+	public void blockUserOnlyBlocksThatSender() {
+		bob.blockUser("Alice");
+		annie.sendMessage(List.of("Bob"), "Hi Bob");
+
+		assertEquals(1, bob.getChatHistory().size());
+	}
+
+	@Test
+	public void blockUserNull() {
+		bob.blockUser(null);
+		alice.sendMessage(List.of("Bob"), "Hi Bob");
+
+		assertEquals(1, bob.getChatHistory().size());
+	}
+
+	@Test
+	public void blockUserBlank() {
+		bob.blockUser("");
+		alice.sendMessage(List.of("Bob"), "Hi Bob");
+
+		assertEquals(1, bob.getChatHistory().size());
+	}
+
+	@Test
+	public void blockUserNotRegistered() {
+		server.blockUser(new User("Bob", server), "Alice");
+		alice.sendMessage(List.of("Bob"), "Hi Bob");
+
+		assertEquals(1, bob.getChatHistory().size());
 	}
 }

@@ -3,11 +3,13 @@ package chat;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.Map;
+import java.util.Set;
 
 import message.*;
 
 public class ChatServer {
 	private Map<String, User> users;	// aggregation
+	private Map<String, Set<String>> blockedUsers;	// composition
 
 	public ChatServer() {
 		this.users = new HashMap<>();
@@ -37,6 +39,10 @@ public class ChatServer {
 		if (!users.remove(user.getName(), user)) {
 			System.err.println(user.getName() + " has not beem registered");
 		}
+	}
+
+	public void blockUser(User blocker, String blockedName) {
+		throw new UnsupportedOperationException();
 	}
 
 	// returns true if at least one recipient got the message

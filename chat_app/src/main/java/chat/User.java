@@ -51,6 +51,10 @@ public class User {
 		}
 	}
 
+	public void blockUser(String blockedName) {
+		throw new UnsupportedOperationException();
+	}
+
 	void receiveMessage(Message message) {
 		history.addMessage(message);
 	}
