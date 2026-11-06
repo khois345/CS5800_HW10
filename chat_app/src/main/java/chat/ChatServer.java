@@ -1,6 +1,7 @@
 package chat;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
@@ -13,6 +14,7 @@ public class ChatServer {
 
 	public ChatServer() {
 		this.users = new HashMap<>();
+		this.blockedUsers = new HashMap<>();
 	}
 
 	// other methods
@@ -42,7 +44,17 @@ public class ChatServer {
 	}
 
 	public void blockUser(User blocker, String blockedName) {
-		throw new UnsupportedOperationException();
+		if (blocker == null || users.get(blocker.getName()) != blocker) {
+			System.err.println("Only registered users can block");
+			return;
+		}
+
+		if (blockedName == null || blockedName.isBlank()) {
+			System.err.println("Blocked user name cannot be blank");
+			return;
+		}
+
+		blockedUsers.computeIfAbsent(blocker.getName(), name -> new HashSet<>()).add(blockedName);
 	}
 
 	// returns true if at least one recipient got the message
@@ -63,6 +75,11 @@ public class ChatServer {
 			User recipient = users.get(name);
 			if (recipient == null || name.equals(sender)) {
 				System.err.println("Cannot deliver message to " + name);
+				continue;
+			}
+
+			if (blockedUsers.getOrDefault(name, Set.of()).contains(sender)) {
+				System.err.println(name + " has blocked " + sender);
 				continue;
 			}
 

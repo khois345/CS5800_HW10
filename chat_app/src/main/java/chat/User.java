@@ -52,7 +52,7 @@ public class User {
 	}
 
 	public void blockUser(String blockedName) {
-		throw new UnsupportedOperationException();
+		server.blockUser(this, blockedName);
 	}
 
 	void receiveMessage(Message message) {
