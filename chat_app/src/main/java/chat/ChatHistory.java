@@ -40,6 +40,19 @@ public class ChatHistory {
 	}
 
 	public void removeMessage(String sender, MessageMemento memento) {
-		throw new UnsupportedOperationException();
+		if (memento == null) {
+			System.err.println("Memento cannot be empty");
+			return;
+		}
+
+		for (int i = messages.size() - 1; i >= 0; i--) {
+			Message message = messages.get(i);
+			if (message.getSender().equals(sender)
+					&& message.getContent().equals(memento.getContent())
+					&& message.getTimestamp().equals(memento.getTimestamp())) {
+				messages.remove(i);
+				return;
+			}
+		}
 	}
 }

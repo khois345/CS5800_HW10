@@ -39,7 +39,7 @@ public class ChatServer {
 		}
 
 		if (!users.remove(user.getName(), user)) {
-			System.err.println(user.getName() + " has not beem registered");
+			System.err.println(user.getName() + " has not registered");
 		}
 	}
 
@@ -91,6 +91,15 @@ public class ChatServer {
 	}
 
 	public boolean undoMessage(String sender, MessageMemento memento) {
-		throw new UnsupportedOperationException();
+		if (!users.containsKey(sender)) {
+			System.err.println(sender + " is not registered");
+			return false;
+		}
+
+		for (User user : users.values()) {
+			user.removeMessage(sender, memento);
+		}
+
+		return true;
 	}
 }

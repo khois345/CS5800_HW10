@@ -16,6 +16,7 @@ public class User {
 		setName(name);
 		this.server = server;
 		this.history = new ChatHistory(name);
+		this.sentMementos = new ArrayDeque<>();
 	}
 
 	public String getName() {
@@ -51,6 +52,7 @@ public class User {
 		Message message = new Message(name, recipients, content);
 		if (server.sendMessage(message)) {
 			history.addMessage(message);
+			sentMementos.push(message.createMemento());
 		}
 	}
 
@@ -59,7 +61,14 @@ public class User {
 	}
 
 	public void undoLastMessage() {
-		throw new UnsupportedOperationException();
+		if (sentMementos.isEmpty()) {
+			System.err.println("No message to undo");
+			return;
+		}
+
+		if (server.undoMessage(name, sentMementos.peek())) {
+			sentMementos.pop();
+		}
 	}
 
 	void receiveMessage(Message message) {
@@ -67,5 +76,6 @@ public class User {
 	}
 
 	void removeMessage(String sender, MessageMemento memento) {
+		history.removeMessage(sender, memento);
 	}
 }
