@@ -1,3 +1,4 @@
+import java.util.Iterator;
 import java.util.List;
 
 import chat.*;
@@ -45,6 +46,13 @@ public class initChatApp {
 		printHistory(alice);
 		printHistory(bob);
 		printHistory(annie);
+		System.out.println();
+
+		// Allow Users to iterate over their message history by a specific user
+		System.out.println("Iterate messages by user " + "-".repeat(50));
+		printMessagesWith(alice, bob);
+		printMessagesWith(alice, annie);
+		printMessagesWith(annie, bob);
 	}
 
 	// Users can receive messages from other users and view the chat history for a specific user.
@@ -52,6 +60,14 @@ public class initChatApp {
 		System.out.println("  " + user.getName() + "'s chat history log:");
 		for (Message message : user.getChatHistory()) {
 			System.out.println("    " + message);
+		}
+	}
+
+	private static void printMessagesWith(User user, User otherUser) {
+		System.out.println("  " + user.getName() + "'s messages with " + otherUser.getName() + ":");
+		Iterator<Message> iterator = user.iterator(otherUser);
+		while (iterator.hasNext()) {
+			System.out.println("    " + iterator.next());
 		}
 	}
 }
