@@ -1,11 +1,12 @@
 package chat;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import message.*;
 
-public class ChatHistory {
+public class ChatHistory implements IterableByUser {
 	private String owner;
 	private List<Message> messages;		// composition
 
@@ -54,5 +55,10 @@ public class ChatHistory {
 				return;
 			}
 		}
+	}
+
+	@Override
+	public Iterator<Message> iterator(User userToSearchWith) {
+		return null;
 	}
 }

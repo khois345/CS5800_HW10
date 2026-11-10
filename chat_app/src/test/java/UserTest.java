@@ -1,6 +1,7 @@
 import chat.*;
 import message.*;
 
+import java.util.Iterator;
 import java.util.List;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -188,5 +189,32 @@ public class UserTest {
 		alice.undoLastMessage();
 
 		assertEquals(1, bob.getChatHistory().size());
+	}
+
+	@Test
+	public void iteratorFindsMessagesWithUser() {
+		alice.sendMessage(List.of("Bob"), "Hi Bob");
+		alice.sendMessage(List.of("Annie"), "Hi Annie");
+		bob.sendMessage(List.of("Alice"), "Hi Alice");
+		Iterator<Message> iterator = alice.iterator(bob);
+
+		assertEquals("Hi Bob", iterator.next().getContent());
+		assertEquals("Hi Alice", iterator.next().getContent());
+		assertFalse(iterator.hasNext());
+	}
+
+	@Test
+	public void iteratorOnlySearchesOwnHistory() {
+		alice.sendMessage(List.of("Bob"), "Hi Bob");
+
+		assertFalse(annie.iterator(bob).hasNext());
+	}
+
+	@Test
+	public void iteratorSkipsUndoneMessage() {
+		alice.sendMessage(List.of("Bob"), "Hi Bob");
+		alice.undoLastMessage();
+
+		assertFalse(alice.iterator(bob).hasNext());
 	}
 }

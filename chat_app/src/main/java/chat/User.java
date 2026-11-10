@@ -2,11 +2,12 @@ package chat;
 
 import java.util.ArrayDeque;
 import java.util.Deque;
+import java.util.Iterator;
 import java.util.List;
 
 import message.*;
 
-public class User {
+public class User implements IterableByUser {
 	private String name;
 	private ChatServer server;		// aggregation
 	private ChatHistory history;	// composition
@@ -69,6 +70,11 @@ public class User {
 		if (server.undoMessage(name, sentMementos.peek())) {
 			sentMementos.pop();
 		}
+	}
+
+	@Override
+	public Iterator<Message> iterator(User userToSearchWith) {
+		return null;
 	}
 
 	void receiveMessage(Message message) {

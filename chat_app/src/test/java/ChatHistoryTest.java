@@ -1,6 +1,7 @@
 import chat.*;
 import message.*;
 
+import java.util.Iterator;
 import java.util.List;
 
 import org.junit.jupiter.api.Test;
@@ -116,5 +117,29 @@ public class ChatHistoryTest {
 		history.removeMessage("Alice", null);
 
 		assertEquals(List.of(sent), history.getMessages());
+	}
+
+	@Test
+	public void iteratorFindsMessagesByUser() {
+		ChatServer server = new ChatServer();
+		Message toAnnie = new Message("Alice", List.of("Annie"), "Hi Annie");
+		history.addMessage(sent);
+		history.addMessage(toAnnie);
+		history.addMessage(received);
+		Iterator<Message> iterator = history.iterator(new User("Bob", server));
+
+		assertSame(sent, iterator.next());
+		assertSame(received, iterator.next());
+		assertFalse(iterator.hasNext());
+	}
+
+	@Test
+	public void iteratorUnaffectedByLaterMessages() {
+		history.addMessage(sent);
+		Iterator<Message> iterator = history.iterator(new User("Bob", new ChatServer()));
+		history.addMessage(received);
+		iterator.next();
+
+		assertFalse(iterator.hasNext());
 	}
 }
